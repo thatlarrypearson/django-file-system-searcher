@@ -1,0 +1,5 @@
+graft django_fs_searcher
+graft django_fs_searcher/management/commands
+graft django_fs_searcher/templates
+prune media
+global-exclude *.py[co]

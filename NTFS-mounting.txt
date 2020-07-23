@@ -1,0 +1,66 @@
+
+
+Windows 10 backups using:
+- "Control Panel" -> "Update & Security" -> "Backup"
+- ["Backup and Restore (Windows 7)" -> "Create a system image"] creates disk images onto the backup disk.
+
+Each backed up disk shows up on the backup drive like this:
+- <backup-drive-letter>:\WindowsImageBackup\<backed-up-hostname>\Backup <YYYY-MM-DD hhmmss>\<something>.vhdx
+
+Each backed up disk shows up on Linux like this:
+- /media/<linux-username>/<drive-name>/WindowsImageBackup/<hostname>/Backup <YYYY-MM-DD hhmmss>/<something>.vhdx
+
+Note that on backed up systems with multiple hard drives being backed up, more than one '.vhdx' file will be found in the 'Backup <YYYY-MM-DD hhmmss>' directory.
+
+human@death-valley /media/human/GCNP-Hiker/WindowsImageBackup $ find . -type f -print
+./hostname/Backup 2020-06-22 123721/68a86249-40a2-4ff6-ac85-7311a50f0e19.vhdx
+./hostname/Backup 2020-06-22 123721/BackupSpecs.xml
+./hostname/Backup 2020-06-22 123721/Esp.vhdx
+./hostname/Backup 2020-06-22 123721/fd891069-6f85-4845-9ad1-3502f42b7434_AdditionalFilesc3b9f3c7-5e52-4d5e-8b20-19adc95a34c7.xml
+./hostname/Backup 2020-06-22 123721/fd891069-6f85-4845-9ad1-3502f42b7434_Components.xml
+./hostname/Backup 2020-06-22 123721/fd891069-6f85-4845-9ad1-3502f42b7434_RegistryExcludes.xml
+./hostname/Catalog/BackupGlobalCatalog
+./hostname/Catalog/GlobalCatalog
+./hostname/Logs/Backup_Error-21-06-2020_14-57-33.log
+./hostname/Logs/Backup_Error-22-06-2020_00-05-48.log
+./hostname/Logs/Backup_Error-22-06-2020_01-55-39.log
+./hostname/Logs/Backup_Error-22-06-2020_11-41-46.log
+./hostname/Logs/Backup_Error-22-06-2020_12-37-21.log
+./hostname/Logs/Backup_Error-30-12-2019_13-53-32.log
+./hostname/MediaId
+./hostname/SPPMetadataCache/{087c8ec7-9484-4ded-b18e-6e9ae628c1a7}
+./hostname/SPPMetadataCache/{0e0501eb-ab3b-47be-833e-417194f7e399}
+./hostname/SPPMetadataCache/{125c16ac-a015-4d02-b18a-c19efb012cb6}
+./hostname/SPPMetadataCache/{15d3d51c-c5a0-4f03-9cfa-f40dc4af7c73}
+./hostname/SPPMetadataCache/{1683ab84-923d-4bca-97dc-fe9294128a4f}
+./hostname/SPPMetadataCache/{17afd6dd-e41b-41c8-9812-4c914c7da84a}
+./hostname/SPPMetadataCache/{2faeb7a3-1462-4ee7-b625-18d0b12fcc5f}
+./hostname/SPPMetadataCache/{403ed61c-33a1-4233-8d19-d7ef2e48e1fd}
+./hostname/SPPMetadataCache/{571ee5c2-5159-4690-ba04-e06507f5d578}
+./hostname/SPPMetadataCache/{64f93125-a702-4034-8b55-2895a654008b}
+./hostname/SPPMetadataCache/{9a8b22fa-68b9-41fa-9e99-78533f08fc63}
+./hostname/SPPMetadataCache/{9d2f0134-611e-4849-ac5b-850c71642a0a}
+./hostname/SPPMetadataCache/{a43e838c-56e2-4f89-b41c-8807a7758669}
+./hostname/SPPMetadataCache/{c5ded46c-8f5d-43cd-9a22-7551955ad964}
+./hostname/SPPMetadataCache/{ca67081a-fc00-42f9-a369-acd1215a7a9d}
+./hostname/SPPMetadataCache/{cc5cd7a3-e34a-4ef8-a866-29c6cfa52104}
+./hostname/SPPMetadataCache/{d9e2d099-c8db-4784-9a23-c75ccd2f5e93}
+./hostname/SPPMetadataCache/{dc99e31f-bc21-48f2-a38f-6a73ca66637d}
+./hostname/SPPMetadataCache/{ec466cbd-bcf3-4733-8b75-5b117f8b3162}
+./hostname/SPPMetadataCache/{f8bb10af-9911-4d35-9589-3df960505723}
+./hostname/SPPMetadataCache/{fd891069-6f85-4845-9ad1-3502f42b7434}
+human@death-valley /media/human/GCNP-Hiker/WindowsImageBackup $ 
+
+*.vhdx files are encoded in a Microsoft published format.  However, no Linux tools were found that could mount these volumes on Linux.  The fallback solution is to mount the volumes on Windows 10 and use Windows Subsystem for Linux (WSL) to search through the mounted volume.
+
+https://docs.microsoft.com/en-us/powershell/module/hyper-v/mount-vhd?view=win10-ps
+https://winaero.com/blog/mount-or-unmount-vhd-or-vhdx-file-in-windows-10/
+
+In Administrator PowerShell:
+
+Mount-VHD -Path c:\test\testvhdx -PassThru | Get-Disk | Get-Partition | Get-Volume
+
+# Mount-VHD -Path c:\test\testvhdx.vhdx
+# Mount-VHD -Path c:\test\testvhdx.vhdx -ReadOnly
+
+
